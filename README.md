@@ -28,15 +28,15 @@ Run `npm run backup` to create a timestamped local database copy in the ignored 
 
 ### Publish on Render
 
-The included `render.yaml` configures a Render web service with a persistent disk for SQLite, a generated session secret, and a health check. The persistent disk requires Render's paid Starter service; the free service has an ephemeral filesystem, so member accounts and content would be lost on restart or redeploy.
+The included `render.yaml` configures a free Render web service, a generated session secret, and a health check. This is suitable for previewing the prototype, but the free service sleeps when idle and has an ephemeral filesystem. Member accounts, sessions, courses, and other SQLite data can be lost when it sleeps, restarts, or redeploys. Do not use this option for data you need to keep.
 
 1. Put this project in a GitHub repository. Keep `.env`, database files, `node_modules`, and `venv` out of the repository; `.gitignore` excludes them.
-2. In Render, choose **New > Blueprint**, connect the repository, and apply `render.yaml`. Review the paid service and disk cost shown by Render before creating it.
+2. In Render, choose **New > Blueprint**, connect the repository, and apply `render.yaml`. This configuration selects Render's free web service and does not attach a persistent disk.
 3. Set `ADMIN_EMAILS` to the email address for the account that should have moderation access. Leave the Google OAuth values empty if you are not enabling Google sign-in.
 4. Once Render gives the service its public `https://…onrender.com` address, open Google Cloud Console and add `https://YOUR-SERVICE.onrender.com/auth/google/callback` as an authorized redirect URI. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the Render service environment, then redeploy. The app derives its callback from the HTTPS request unless `GOOGLE_CALLBACK_URL` is explicitly set.
 5. Share the Render URL. Register a new account on the deployed site; local accounts and the local SQLite database are not uploaded.
 
-The included configuration is for a small prototype on one server instance. Back up `/var/data/skillbridge.sqlite` regularly; a persistent disk protects against routine restarts, but it is not a separate backup.
+To keep member data reliably, switch to a paid persistent disk or migrate the app and session storage to a hosted database before inviting people to rely on saved data.
 
 ## Current MVP scope
 
