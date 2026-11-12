@@ -4,72 +4,52 @@ SkillBridge is a community learning prototype where members share skills, join g
 
 ## Stack
 
-- Node.js and Express for the web server and API
-- SQLite (`better-sqlite3`) for local persistent data
 - HTML, CSS, and browser JavaScript for the interface
-- `express-session` and `bcryptjs` for basic session-based sign-in
-
-The original Python skill-exchange prototype remains in `app/Module.py` for reference. The active app is the Node.js server.
+- Node.js, Express, `better-sqlite3`, `express-session`, and `bcryptjs` for local development
+- Cloudflare Workers, Express compatibility, and D1 for the card-free hosted version
+- The original Python skill-exchange prototype remains in `app/Module.py` for reference
 
 ## Run locally
 
 1. Install Node.js 20 or newer.
-2. In this folder, install dependencies with `npm install`.
+2. In this folder, run `npm install`.
 3. Copy `.env.example` to `.env` and set a private `SESSION_SECRET`.
-4. Start the app with `npm run dev` (or `npm start`).
+4. Start the local app with `npm run dev` (or `npm start`).
 5. Open `http://localhost:3000`.
 
-## Share the prototype
+The local Node app stores data in `skillbridge.sqlite` in this folder. The database, `.env`, `node_modules`, and Python virtual environment are excluded by `.gitignore`. Run `npm run backup` for a local database backup.
 
-Unzip the prototype package, open a terminal in the extracted `skillbridge` folder, run `npm install`, copy `.env.example` to `.env`, set a private random `SESSION_SECRET`, and run `npm start`. Add Google OAuth credentials only if you want to test Google sign-in. Each local installation creates its own SQLite database; no member data or OAuth credentials are included in the source package.
+## Publish on Cloudflare Workers (free plan)
 
-The SQLite database is created as `skillbridge.sqlite` in this folder and is excluded from version control.
-Run `npm run backup` to create a timestamped local database copy in the ignored `backups/` folder. Keep a copy somewhere separate from this computer before relying on the app.
+The hosted Worker uses D1 for persistent app data. The free Workers plan does not require a payment card. Free usage limits apply, including 100,000 Worker requests per day and 500 MB per D1 database. Reaching a free usage limit can temporarily stop requests or database operations until the limit resets. This configuration is for a prototype, not a production service.
 
-### Publish on Render
+1. Create a free Cloudflare account and install Node.js 20 or newer.
+2. Open a terminal in this project folder and run `npx wrangler login`. Authorize Wrangler in the browser.
+3. Create a D1 database with `npx wrangler d1 create skillbridge-db`. If prompted, let Wrangler update `wrangler.jsonc` and enter `DB` for the binding name.
+4. Apply the schema with `npx wrangler d1 migrations apply skillbridge-db --remote`.
+5. Set the session signing secret with `npx wrangler secret put SESSION_SECRET` and enter a long random value when prompted. To enable moderation, also run `npx wrangler secret put ADMIN_EMAILS` and enter the admin email.
+6. Deploy using `npm run cf:deploy`. Wrangler prints a public `https://….workers.dev` URL.
+7. Google sign-in is optional. After deployment, add `https://YOUR-WORKER.workers.dev/auth/google/callback` to the OAuth client's authorized redirect URIs. Set the client ID and secret with `npx wrangler secret put GOOGLE_CLIENT_ID` and `npx wrangler secret put GOOGLE_CLIENT_SECRET`.
 
-The included `render.yaml` configures a free Render web service, a generated session secret, and a health check. This is suitable for previewing the prototype, but the free service sleeps when idle and has an ephemeral filesystem. Member accounts, sessions, courses, and other SQLite data can be lost when it sleeps, restarts, or redeploys. Do not use this option for data you need to keep.
-
-1. Put this project in a GitHub repository. Keep `.env`, database files, `node_modules`, and `venv` out of the repository; `.gitignore` excludes them.
-2. In Render, choose **New > Blueprint**, connect the repository, and apply `render.yaml`. This configuration selects Render's free web service and does not attach a persistent disk.
-3. Set `ADMIN_EMAILS` to the email address for the account that should have moderation access. Leave the Google OAuth values empty if you are not enabling Google sign-in.
-4. Once Render gives the service its public `https://…onrender.com` address, open Google Cloud Console and add `https://YOUR-SERVICE.onrender.com/auth/google/callback` as an authorized redirect URI. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the Render service environment, then redeploy. The app derives its callback from the HTTPS request unless `GOOGLE_CALLBACK_URL` is explicitly set.
-5. Share the Render URL. Register a new account on the deployed site; local accounts and the local SQLite database are not uploaded.
-
-To keep member data reliably, switch to a paid persistent disk or migrate the app and session storage to a hosted database before inviting people to rely on saved data.
+The Cloudflare Worker has a separate deployment entry at `worker.js` and uses D1's asynchronous SQLite API, signed cookie sessions, and Web Crypto password hashing. The local app remains in `server.js`. Local SQLite accounts and content are not automatically copied to D1; create a new account on the deployed site. Never commit `.env`, OAuth secrets, or other credentials.
 
 ## Current MVP scope
 
 - Account registration, login, and logout
-- Google sign-in when OAuth credentials are configured
-- A profile with skills to teach and learn
-- Original comic-inspired hero personas and profile portraits
-- A home page that explains the learning flow and a separate profile page
-- Member discovery and skill profiles
+- Optional Google sign-in
+- Profiles with skills to teach and learn, plus original comic-inspired hero personas
+- Home, member discovery, and member profiles
 - Member-created communities with group chat and threaded discussions
-- Member-created courses with lessons and completion tracking
-- Mission-style learning progress with XP based on completed lessons
-- A My Learning page with enrolled courses and lesson completion progress
-- Accepted connections with private messages on a separate Messages page
-- Connection request inbox, content ownership controls, and member reports
-- Moderator account suspension and restoration
-- SQLite-backed sessions and sign-in rate limits
-- Empty states when no member content exists; no demo courses or groups are seeded
+- Member-created courses with lessons, enrollment, and completion tracking
+- Connection requests, private messages, and moderation/reporting
+- Empty states when no member-created content exists; no example courses or groups are seeded
 
-Course payments and subscriptions, email verification, password recovery, and hosted database deployment are not connected yet. Premium course lessons stay locked until a member has access. Group chat and private messaging refresh periodically in this MVP and are not end-to-end encrypted. Add moderator emails to `ADMIN_EMAILS` to enable the moderation page. Do not use this MVP to process real payments or sensitive personal information.
+Course payments and subscriptions, email verification, and password recovery are not connected. Group chat and private messages refresh periodically and are not end-to-end encrypted. Do not use this prototype to process real payments or sensitive personal information.
 
-### Google sign-in setup
+## Google sign-in setup
 
-1. In Google Cloud Console, create a project and configure the Google Auth consent screen/branding.
-2. For local testing, keep the app in testing mode and add your Google account as a test user if Google asks for one.
-3. Create an OAuth client with application type **Web application**.
-4. Add this exact authorized redirect URI: `http://localhost:3000/auth/google/callback`.
-5. Copy the client ID and client secret into `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in your local `.env` file, then restart SkillBridge.
-
-Google requires the redirect URI sent by the app to exactly match one configured on the OAuth client. Keep `.env` private and never commit it. The sign-in button stays disabled until both values are set. For deployment, use your HTTPS domain and register its exact callback URL too.
-
-Set `ADMIN_EMAILS` to one or more comma-separated account emails to show the moderation page, for example `ADMIN_EMAILS=you@example.com`. Set a strong random `SESSION_SECRET` in `.env` before sharing the app.
+For local testing, create a Google OAuth **Web application** client and add `http://localhost:3000/auth/google/callback` as an authorized redirect URI. Put its client ID and secret in your local `.env` file. For Cloudflare deployment, add the Worker callback URL above to the OAuth client and set the values as Wrangler secrets. Google requires an exact redirect URI match. Keep credentials private.
 
 ## Legacy prototype
 
-The Python CLI prototype can still be run separately from this folder with `python -m app.Module` if Python is installed. It uses in-memory demo data and is not used by the Node.js app.
+The Python CLI prototype can still be run separately with `python -m app.Module` if Python is installed. It uses in-memory demo data and is not used by the Node.js app.

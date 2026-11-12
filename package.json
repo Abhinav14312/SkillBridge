@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "backup": "node scripts/backup.js"
+    "backup": "node scripts/backup.js",
+    "cf:dev": "npx --yes wrangler dev",
+    "cf:deploy": "npx --yes wrangler deploy"
   },
   "engines": {
     "node": ">=20"

@@ -6,6 +6,8 @@ node_modules/
 *.sqlite-wal
 backups/
 npm-debug.log*
+.wrangler/
+.dev.vars
 
 # Legacy Python prototype environment and generated files
 venv/
