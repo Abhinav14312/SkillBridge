@@ -1,0 +1,20 @@
+# Node dependencies and local runtime files
+node_modules/
+.env
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+backups/
+npm-debug.log*
+
+# Legacy Python prototype environment and generated files
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

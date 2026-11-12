@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1b2036">
+  <meta name="description" content="Build skills, find your learning team, and complete your next mission together.">
+  <title>SkillBridge | Every skill has an origin story</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" data-go="home"><span class="brand-mark">S</span> skillbridge</a>
+    <nav aria-label="Main navigation">
+      <button class="nav-link active" data-page="home">Home</button>
+      <button class="nav-link" data-page="groups">Communities</button>
+      <button class="nav-link" data-page="discover">People</button>
+      <button class="nav-link" data-page="messages">Messages</button>
+      <button class="nav-link" data-page="courses">Courses</button>
+      <button class="nav-link" data-page="learning">My learning</button>
+      <button class="nav-link" data-page="profile">My profile</button>
+      <button class="nav-link hidden" data-page="moderation" id="moderation-nav">Moderation</button>
+    </nav>
+    <div class="account-area" id="account-area"></div>
+  </header>
+
+  <main class="shell">
+    <section id="auth-panel" class="auth-panel">
+      <div class="auth-copy">
+        <p class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</p>
+        <h1>Every skill has<br>an <em>origin story.</em></h1>
+        <p>Find your people, share your powers, and level up together.</p>
+      </div>
+      <form id="auth-form" class="card auth-card">
+        <div class="auth-tabs"><button type="button" class="auth-tab" data-mode="login">Sign in</button><button type="button" class="auth-tab active" data-mode="register">Create account</button></div>
+        <label id="name-field">Your name<input name="name" autocomplete="name" minlength="2"></label>
+        <label>Email<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label>Password<input name="password" type="password" autocomplete="new-password" placeholder="At least 8 characters" required></label>
+        <button class="button primary full" type="submit" id="auth-submit">Create my account</button>
+        <p class="form-message" id="auth-message" role="status"></p>
+        <div class="auth-divider"><span>or</span></div>
+        <a class="google-button" href="/auth/google" id="google-signin">Continue with Google</a>
+        <p class="auth-help" id="google-help">Google sign-in needs setup by the app owner.</p>
+      </form>
+    </section>
+
+    <section id="app-panel" class="hidden">
+      <div class="page-heading">
+        <div><p class="eyebrow">YOUR LEARNING SPACE</p><h1 id="page-title">Welcome.</h1><p id="page-subtitle">Teach something. Learn something. Find your people.</p></div>
+        <button class="button soft hidden" id="profile-button">Edit profile</button>
+      </div>
+
+      <section id="home-page" class="home-dashboard">
+        <section class="card welcome-card"><div class="comic-label">ISSUE NO. 01 · SKILLBRIDGE</div><p class="eyebrow">YOUR HERO HQ</p><h2 id="welcome-name">Welcome to SkillBridge.</h2><p>Every great learner starts somewhere. Pick a persona, find your team, and turn what you know into someone else’s superpower.</p><div class="welcome-actions"><button class="button primary" data-go="profile">Build my hero profile</button><button class="button soft" data-go="groups">Find my team</button></div><span class="welcome-burst" aria-hidden="true">GO!</span></section>
+        <div class="dashboard-grid">
+          <section class="card dashboard-guide"><p class="eyebrow">HOW SKILLBRIDGE WORKS</p><h2>Start with what you know.</h2><p>Add skills you can teach and skills you want to learn. Then meet people through communities, start discussions, or publish a course of your own.</p><div class="step-list"><div><span>01</span><p><strong>Build your profile</strong><br>Tell people what you know and what you are curious about.</p></div><div><span>02</span><p><strong>Find your people</strong><br>Join communities and connect with other learners.</p></div><div><span>03</span><p><strong>Teach or learn</strong><br>Chat, discuss ideas, or create a course when you are ready.</p></div></div></section>
+          <aside class="dashboard-actions"><section class="card action-card"><p class="eyebrow">LEARN TOGETHER</p><h3>Find a community</h3><p>Join a group around something you care about, or create a space of your own.</p><button class="text-button" data-go="groups">Browse communities →</button></section><section class="card action-card"><p class="eyebrow">SHARE WHAT YOU KNOW</p><h3>Teach a course</h3><p>Have something useful to teach? Add a course for other members.</p><button class="text-button" data-go="courses">Create a course →</button></section></aside>
+        </div>
+      </section>
+
+      <section id="discover-page" class="hidden">
+        <div class="section-title"><div><p class="eyebrow">PEOPLE MAKE THE DIFFERENCE</p><h2>Find your learning people</h2></div></div>
+        <div id="member-list" class="member-grid"></div>
+      </section>
+
+      <section id="courses-page" class="hidden">
+        <div class="section-title"><div><p class="eyebrow">LEARN AT YOUR PACE</p><h2>Courses from members</h2></div></div>
+        <div class="course-layout">
+          <form id="course-form" class="card course-create"><p class="eyebrow">TEACH SOMETHING</p><h3 id="course-form-heading">Add a course</h3><label>Course title<input name="title" maxlength="120" placeholder="What will learners learn?" required></label><label>Category<input name="category" maxlength="60" placeholder="Music, design, technology…" required></label><label>Description<textarea name="description" maxlength="2000" rows="4" placeholder="Who is this course for, and what will they learn?" required></textarea></label><div class="lesson-builder-heading"><p class="eyebrow">COURSE CONTENT</p><button class="text-button" type="button" id="add-lesson">+ Add a lesson</button></div><div id="lesson-fields"><div class="lesson-input"><label>Lesson 1 title<input name="lessonTitle" maxlength="120" placeholder="First lesson" required></label><label>Lesson content<textarea name="lessonContent" maxlength="10000" rows="4" placeholder="Write the lesson for your learners…" required></textarea></label></div></div><p class="form-message" id="course-message" role="status"></p><button class="button primary full" type="submit" id="course-submit">Publish course</button><button class="button soft full hidden" type="button" id="cancel-course-edit">Cancel editing</button></form>
+          <div class="course-results"><div id="course-list" class="course-grid"></div><section id="course-detail" class="hidden"></section></div>
+        </div>
+      </section>
+
+      <section id="learning-page" class="hidden"><div class="section-title"><div><p class="eyebrow">YOUR COURSES</p><h2>My learning</h2></div></div><div id="learning-list" class="learning-grid"></div></section>
+
+      <section id="profile-page" class="hidden">
+        <div class="profile-page-grid"><section class="card profile-detail" id="profile-summary"></section><section class="card profile-explainer"><p class="eyebrow">YOUR HERO CARD</p><h2>What’s your learning origin story?</h2><p><strong>Choose a persona</strong> to give your profile its own comic-book identity.</p><p><strong>Skills you share</strong> can become someone else’s next breakthrough.</p><p><strong>Your learning goals</strong> help your team spot ways to help.</p><button class="button primary" id="edit-profile-button">Customize my hero</button></section></div>
+      </section>
+
+      <section id="messages-page" class="hidden"><div class="messages-layout"><aside class="card message-sidebar"><section><p class="eyebrow">CONNECTION REQUESTS</p><div id="request-list" class="request-list"></div></section><section class="contacts-section"><p class="eyebrow">YOUR CONNECTIONS</p><div id="contact-list" class="contact-list"></div></section></aside><section class="card direct-panel"><div id="direct-empty" class="direct-empty"><span class="tiny-icon">✉</span><h2>Your conversations</h2><p>Connect with a member first, then message them here.</p></div><div id="direct-conversation" class="hidden"></div></section></div></section>
+
+      <section id="groups-page" class="hidden">
+        <div class="section-title"><div><p class="eyebrow">LEARN IN GOOD COMPANY</p><h2>Communities</h2></div></div>
+        <div class="community-layout"><div class="community-main"><div id="community-list" class="community-grid"></div><section id="selected-community" class="hidden"></section></div>
+          <form id="community-form" class="card community-create"><p class="eyebrow">START A SPACE</p><h3>Create a community</h3><label>Community name<input name="name" maxlength="70" placeholder="e.g. Weekend Sketch Club" required></label><label>What is it about?<textarea name="description" maxlength="300" rows="4" placeholder="What can people share or learn here?" required></textarea></label><p class="form-message" id="community-message" role="status"></p><button class="button primary full" type="submit">Create community</button></form>
+        </div>
+      </section>
+
+      <section id="moderation-page" class="hidden"><div class="section-title"><div><p class="eyebrow">MEMBER SAFETY</p><h2>Reports to review</h2></div></div><div id="moderation-list" class="stack"></div></section>
+    </section>
+  </main>
+
+  <dialog id="profile-dialog" class="profile-dialog"><form id="profile-form">
+    <div class="section-title"><div><p class="eyebrow">YOUR SKILL CARD</p><h2>Make your profile yours</h2></div><button class="icon-button" type="button" id="close-dialog" aria-label="Close">×</button></div>
+    <label>Name<input name="name" maxlength="80" required></label><label>Choose your hero persona<select name="heroPersona"><option value="spark">The Spark · lightning quick learner</option><option value="guardian">The Guardian · steady teammate</option><option value="inventor">The Maker · curious creator</option><option value="voyager">The Voyager · bold explorer</option><option value="oracle">The Oracle · thoughtful problem-solver</option></select></label><label>A little about you<textarea name="bio" maxlength="500" rows="3" placeholder="What are you curious about?"></textarea></label>
+    <label>Skills I can teach <span class="hint">Separate skills with commas</span><input name="teach" placeholder="Python, drawing, public speaking"></label><label>Skills I want to learn <span class="hint">Separate skills with commas</span><input name="learn" placeholder="Guitar, design, investing"></label>
+    <p class="form-message" id="profile-message" role="status"></p><button class="button primary full" type="submit">Save my profile</button>
+  </form></dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <footer><span>SkillBridge</span><span>Learning feels better together.</span><span class="prototype-tag">PROTOTYPE BUILD</span></footer>
+</body>
+</html>
