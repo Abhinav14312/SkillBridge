@@ -2,6 +2,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "skillbridge-prototype",
 	"main": "worker.js",
+	"keep_vars": true,
 	"compatibility_date": "2026-11-12",
 	"compatibility_flags": [
 		"nodejs_compat"
