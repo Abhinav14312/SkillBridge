@@ -8,6 +8,7 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "backup": "node scripts/backup.js",
+    "reset:cloudflare-password": "node scripts/reset-cloudflare-password.js",
     "cf:dev": "npx --yes wrangler dev",
     "cf:deploy": "npx --yes wrangler deploy"
   },

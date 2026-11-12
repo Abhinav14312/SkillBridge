@@ -279,7 +279,7 @@ app.get('/api/communities/:id/room', requireUser, async (req, res) => {
   const id = Number(req.params.id);
   const community = await get('SELECT id, name, description FROM communities WHERE id = ?', id);
   if (!community) return res.status(404).json({ error: 'Community not found.' });
-  if (!await get('SELECT 1 FROM community_members WHERE community_id = ? AND user_id = ?', id, req.userId)) return res.status(403).json({ error: 'Join this community to open its room.' });
+  community.joined = Boolean(await get('SELECT 1 FROM community_members WHERE community_id = ? AND user_id = ?', id, req.userId));
   const discussions = await all(`SELECT d.id, d.title, d.body, d.created_at AS createdAt, u.name, u.id AS userId FROM community_discussions d JOIN users u ON u.id = d.user_id WHERE d.community_id = ? ORDER BY d.id DESC LIMIT 100`, id);
   for (const discussion of discussions) discussion.comments = await all(`SELECT c.id, c.body, c.created_at AS createdAt, u.name, u.id AS userId FROM discussion_comments c JOIN users u ON u.id = c.user_id WHERE c.discussion_id = ? ORDER BY c.id`, discussion.id);
   res.json({ community, discussions });

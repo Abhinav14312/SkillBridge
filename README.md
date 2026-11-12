@@ -33,6 +33,10 @@ The hosted Worker uses D1 for persistent app data. The free Workers plan does no
 
 The Cloudflare Worker has a separate deployment entry at `worker.js` and uses D1's asynchronous SQLite API, signed cookie sessions, and Web Crypto password hashing. The local app remains in `server.js`. Local SQLite accounts and content are not automatically copied to D1; create a new account on the deployed site. Never commit `.env`, OAuth secrets, or other credentials.
 
+### Reset a hosted account password
+
+If you are signed out and cannot remember the password, run `npm run reset:cloudflare-password` from this folder in an interactive terminal. Wrangler must already be logged in with access to this project's Cloudflare account. Enter the email used on the hosted site and the new password twice; password entry is hidden. This updates only that account's password hash in the remote `skillbridge-db` D1 database. It does not require a website redeploy. Keep the new password private.
+
 ## Current MVP scope
 
 - Account registration, login, and logout
